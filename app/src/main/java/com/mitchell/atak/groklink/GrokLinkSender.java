@@ -78,7 +78,11 @@ final class GrokLinkSender {
         Marker self = mv == null ? null : mv.getSelfMarker();
         if (self != null && self.getPoint() != null) {
             point = new CotPoint(self.getPoint());
-            myType = self.getType();
+            // The self marker's own type is the literal "self" (seen in a
+            // captured request); only a real CoT atom type belongs in <link>.
+            String t = self.getType();
+            if (t != null && t.startsWith("a-"))
+                myType = t;
         }
 
         CoordinatedTime now = new CoordinatedTime();
