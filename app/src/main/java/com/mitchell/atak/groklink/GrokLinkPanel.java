@@ -46,6 +46,20 @@ final class GrokLinkPanel {
     /** One thread for sending, so the UI thread never waits on ATAK comms. */
     private final ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
 
+    /** Shows the bot's chat replies in the conversation view (P3). */
+    private final GrokLinkReplies replies = new GrokLinkReplies(new GrokLinkReplies.Sink() {
+        @Override
+        public String botCallsign() {
+            return GrokLinkPanel.this.botCallsign();
+        }
+
+        @Override
+        public void onReply(String bot, String text) {
+            // The listener may run off the UI thread.
+            postLine(pluginContext.getString(R.string.line_bot, bot, text));
+        }
+    });
+
     GrokLinkPanel(Context pluginContext, View root) {
         this.pluginContext = pluginContext;
         this.root = root;
@@ -90,6 +104,10 @@ final class GrokLinkPanel {
             }
         });
         refreshStatus();
+        // Listen from when the panel is first opened until the plugin
+        // unloads, so replies that arrive while the pane is closed are still
+        // in the conversation when it is reopened.
+        replies.register();
     }
 
     View getView() {
@@ -98,11 +116,13 @@ final class GrokLinkPanel {
 
     /** Called when the pane is shown. */
     void onShown() {
+        replies.register();  // no-op if already registered
         refreshStatus();
     }
 
     /** Called when the plugin unloads. */
     void dispose() {
+        replies.unregister();
         sendExecutor.shutdownNow();
     }
 

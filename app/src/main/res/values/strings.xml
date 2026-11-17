@@ -17,6 +17,7 @@
     <string name="status_missing">%1$s: not in your contacts</string>
 
     <string name="line_me">Me: %1$s</string>
+    <string name="line_bot">%1$s: %2$s</string>
     <string name="send_ok">Sent to %1$s.</string>
     <string name="send_failed">Not sent: %1$s</string>
 
