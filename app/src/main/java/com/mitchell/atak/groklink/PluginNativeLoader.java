@@ -1,5 +1,5 @@
 
-package com.atakmap.android.plugintemplate.plugin;
+package com.mitchell.atak.groklink;
 
 import java.io.File;
 import android.content.Context;

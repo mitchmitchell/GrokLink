@@ -103,7 +103,7 @@ def supportedFlavors =
 
 android {
     compileSdk 36
-    namespace 'com.atakmap.android.plugintemplate.plugin'
+    namespace 'com.mitchell.atak.groklink'
 
     buildFeatures {
         buildConfig = true
@@ -286,6 +286,9 @@ def getCommandFlavor() {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
+
+    // GrokLink: JVM unit tests only (src/test). Never packaged into the plugin.
+    testImplementation 'junit:junit:4.13.2'
 }
 
 configurations.all {

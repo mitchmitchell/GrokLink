@@ -1,5 +1,5 @@
 
-package com.atakmap.android.plugintemplate.plugin;
+package com.mitchell.atak.groklink;
 
 import android.content.Context;
 
@@ -15,16 +15,36 @@ import gov.tak.api.ui.ToolbarItem;
 import gov.tak.api.ui.ToolbarItemAdapter;
 import gov.tak.platform.marshal.MarshalManager;
 
-public class PluginTemplate implements IPlugin {
+/**
+ * GrokLink plugin entry point.
+ *
+ * ATAK finds this class through assets/plugin.xml, which names it as the
+ * implementation of gov.tak.api.plugin.IPlugin. ATAK constructs it once with
+ * an IServiceController, then calls onStart() when the plugin loads and
+ * onStop() when it unloads.
+ *
+ * Pattern source: samples/plugintemplate (PluginTemplate.java) in the
+ * ATAK-CIV 5.8.0.10 SDK. The structure below is kept as close to the
+ * template as possible so it is easy to compare.
+ */
+public class GrokLinkPlugin implements IPlugin {
 
-    IServiceController serviceController;
-    Context pluginContext;
-    IHostUIService uiService;
-    ToolbarItem toolbarItem;
-    Pane templatePane;
+    private final IServiceController serviceController;
 
-    public PluginTemplate(IServiceController serviceController) {
+    /** The plugin's own context: use it for the plugin's layouts and resources. */
+    private Context pluginContext;
+
+    /** ATAK's UI service: toolbar buttons and drop-down panes. */
+    private final IHostUIService uiService;
+
+    private final ToolbarItem toolbarItem;
+    private Pane grokPane;
+
+    public GrokLinkPlugin(IServiceController serviceController) {
         this.serviceController = serviceController;
+
+        // ATAK integration point: the plugin context comes from the
+        // PluginContextProvider service (plugintemplate does the same).
         final PluginContextProvider ctxProvider = serviceController
                 .getService(PluginContextProvider.class);
         if (ctxProvider != null) {
@@ -32,14 +52,12 @@ public class PluginTemplate implements IPlugin {
             pluginContext.setTheme(R.style.ATAKPluginTheme);
         }
 
-        // obtain the UI service
+        // ATAK integration point: the host UI service adds toolbar items
+        // and shows panes.
         uiService = serviceController.getService(IHostUIService.class);
 
-        // initialize the toolbar button for the plugin
-
-        // create the button and set the identifier to be well known
-        // if you fail to do this, the toolbar configuration will never
-        // be able to find it again after the user moves the icon.
+        // The identifier must stay stable (the package name), otherwise ATAK
+        // loses the button's position when the user rearranges the toolbar.
         toolbarItem = new ToolbarItem.Builder(
                 pluginContext.getString(R.string.app_name),
                 MarshalManager.marshal(
@@ -57,44 +75,35 @@ public class PluginTemplate implements IPlugin {
 
     @Override
     public void onStart() {
-        // the plugin is starting, add the button to the toolbar
         if (uiService == null)
             return;
-
         uiService.addToolbarItem(toolbarItem);
     }
 
     @Override
     public void onStop() {
-        // the plugin is stopping, remove the button from the toolbar
         if (uiService == null)
             return;
-
+        // Close the pane and remove the button so nothing is left behind
+        // when ATAK unloads or reloads the plugin.
+        if (grokPane != null && uiService.isPaneVisible(grokPane))
+            uiService.closePane(grokPane);
         uiService.removeToolbarItem(toolbarItem);
     }
 
     private void showPane() {
-        // instantiate the plugin view if necessary
-        if(templatePane == null) {
-            // Remember to use the PluginLayoutInflator if you are actually inflating a custom view
-            // In this case, using it is not necessary - but I am putting it here to remind
-            // developers to look at this Inflator
-
-            templatePane = new PaneBuilder(PluginLayoutInflater.inflate(pluginContext,
+        if (grokPane == null) {
+            // ATAK integration point: inflate plugin layouts with
+            // PluginLayoutInflater and the plugin context, never ATAK's.
+            grokPane = new PaneBuilder(PluginLayoutInflater.inflate(pluginContext,
                     R.layout.main_layout, null))
-                    // relative location is set to default; pane will switch location dependent on
-                    // current orientation of device screen
                     .setMetaValue(Pane.RELATIVE_LOCATION, Pane.Location.Default)
-                    // pane will take up 50% of screen width in landscape mode
                     .setMetaValue(Pane.PREFERRED_WIDTH_RATIO, 0.5D)
-                    // pane will take up 50% of screen height in portrait mode
                     .setMetaValue(Pane.PREFERRED_HEIGHT_RATIO, 0.5D)
                     .build();
         }
-
-        // if the plugin pane is not visible, show it!
-        if(!uiService.isPaneVisible(templatePane)) {
-            uiService.showPane(templatePane, null);
+        if (!uiService.isPaneVisible(grokPane)) {
+            uiService.showPane(grokPane, null);
         }
     }
 }

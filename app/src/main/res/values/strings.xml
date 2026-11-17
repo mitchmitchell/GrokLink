@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">Plugin Template</string>
+    <string name="app_name">GrokLink</string>
     <!-- description -->
-    <string name="app_desc">This plugin demonstrate bare bones plugin UI, and may be used to start a new plugin project</string>
+    <string name="app_desc">Example plugin: send a typed request and a short map summary to an AI bot contact on your TAK Server, and read its replies.</string>
 
-
-
-
+    <!-- Panel -->
+    <string name="panel_placeholder">GrokLink panel. The request form arrives in the next build.</string>
 </resources>
