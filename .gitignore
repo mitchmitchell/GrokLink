@@ -1,0 +1,7 @@
+build/
+.gradle/
+.takdev/
+local.properties
+*.iml
+.idea/
+*.log
