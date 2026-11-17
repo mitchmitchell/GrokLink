@@ -6,5 +6,22 @@
     <string name="app_desc">Example plugin: send a typed request and a short map summary to an AI bot contact on your TAK Server, and read its replies.</string>
 
     <!-- Panel -->
-    <string name="panel_placeholder">GrokLink panel. The request form arrives in the next build.</string>
+    <string name="refresh">Refresh</string>
+    <string name="settings">Bot</string>
+    <string name="send">Send</string>
+    <string name="request_hint">Ask the bot something</string>
+
+    <string name="status_no_bot">No bot set. Tap Bot to choose one.</string>
+    <string name="status_online">%1$s: online</string>
+    <string name="status_offline">%1$s: not reporting right now</string>
+    <string name="status_missing">%1$s: not in your contacts</string>
+
+    <string name="line_me">Me: %1$s</string>
+    <string name="send_ok">Sent to %1$s.</string>
+    <string name="send_failed">Not sent: %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Bot callsign</string>
+    <string name="settings_message">The callsign of the bot contact on your TAK Server, for example GROK-1.</string>
+    <string name="settings_invalid">That callsign was not saved: use letters, digits, spaces, dashes, dots or underscores.</string>
 </resources>

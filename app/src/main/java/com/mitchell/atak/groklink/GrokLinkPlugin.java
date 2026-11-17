@@ -39,6 +39,7 @@ public class GrokLinkPlugin implements IPlugin {
 
     private final ToolbarItem toolbarItem;
     private Pane grokPane;
+    private GrokLinkPanel panel;
 
     public GrokLinkPlugin(IServiceController serviceController) {
         this.serviceController = serviceController;
@@ -88,6 +89,11 @@ public class GrokLinkPlugin implements IPlugin {
         // when ATAK unloads or reloads the plugin.
         if (grokPane != null && uiService.isPaneVisible(grokPane))
             uiService.closePane(grokPane);
+        if (panel != null) {
+            panel.dispose();
+            panel = null;
+            grokPane = null;
+        }
         uiService.removeToolbarItem(toolbarItem);
     }
 
@@ -95,8 +101,9 @@ public class GrokLinkPlugin implements IPlugin {
         if (grokPane == null) {
             // ATAK integration point: inflate plugin layouts with
             // PluginLayoutInflater and the plugin context, never ATAK's.
-            grokPane = new PaneBuilder(PluginLayoutInflater.inflate(pluginContext,
-                    R.layout.main_layout, null))
+            panel = new GrokLinkPanel(pluginContext, PluginLayoutInflater.inflate(
+                    pluginContext, R.layout.main_layout, null));
+            grokPane = new PaneBuilder(panel.getView())
                     .setMetaValue(Pane.RELATIVE_LOCATION, Pane.Location.Default)
                     .setMetaValue(Pane.PREFERRED_WIDTH_RATIO, 0.5D)
                     .setMetaValue(Pane.PREFERRED_HEIGHT_RATIO, 0.5D)
@@ -104,6 +111,7 @@ public class GrokLinkPlugin implements IPlugin {
         }
         if (!uiService.isPaneVisible(grokPane)) {
             uiService.showPane(grokPane, null);
+            panel.onShown();
         }
     }
 }
